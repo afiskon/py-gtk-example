@@ -23,8 +23,9 @@ class Handler:
         self.window_is_hidden = False
 
     def onShowButtonClicked(self, button):
+        msg = "Clicked: " + entry.get_text()
         dialog = Gtk.MessageDialog(window, 0, Gtk.MessageType.INFO,
-                                   Gtk.ButtonsType.OK, "Clicked: " + entry.get_text())
+                                   Gtk.ButtonsType.OK, msg)
         dialog.run()
         dialog.destroy()
 
