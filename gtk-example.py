@@ -8,6 +8,7 @@ import signal
 import os
 import gi
 gi.require_version('Gtk', '3.0')
+gi.require_version('Notify', '0.7')
 from gi.repository import Gtk
 from gi.repository import Notify
 
@@ -20,8 +21,6 @@ ICON = os.path.join(CURRDIR, 'python3.xpm')
 # See:
 # * http://ubuntuforums.org/showthread.php?t=1923373#post11902222
 # * https://github.com/syncthing/syncthing-gtk/blob/master/syncthing_gtk/statusicon.py
-
-
 class TrayIcon:
 
     def __init__(self, appid, icon, menu):
@@ -44,8 +43,8 @@ class TrayIcon:
             self.ind.connect('popup-menu', self.right_click_event)
 
     def right_click_event(self, icon, button, time):
-        def pos(menu, aicon):
-            return (Gtk.StatusIcon.position_menu(menu, aicon))
+        def pos(menu, x, y, user_data):
+            return (Gtk.StatusIcon.position_menu(menu, x, y, user_data))
 
         self.menu.popup(None, None, pos, icon, button, time)
 
