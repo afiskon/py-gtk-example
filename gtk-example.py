@@ -40,13 +40,10 @@ class TrayIcon:
         else:
             self.ind = Gtk.StatusIcon()
             self.ind.set_from_file(icon)
-            self.ind.connect('popup-menu', self.right_click_event)
+            self.ind.connect('popup-menu', self.onPopupMenu)
 
-    def right_click_event(self, icon, button, time):
-        def pos(menu, x, y, user_data):
-            return (Gtk.StatusIcon.position_menu(menu, x, y, user_data))
-
-        self.menu.popup(None, None, pos, icon, button, time)
+    def onPopupMenu(self, icon, button, time):
+        self.menu.popup(None, None, Gtk.StatusIcon.position_menu, icon, button, time)
 
 
 class Handler:
