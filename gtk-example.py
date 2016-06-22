@@ -5,17 +5,43 @@
 # http://eax.me/
 
 import signal
+import os
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
-from gi.repository import AppIndicator3 as AI
 from gi.repository import Notify
 
-
 APPID = "GTK Test"
-# could be PNG, SVG or even Gtk.STOCK_INFO as well
-ICON = '/usr/share/pixmaps/python3.xpm'
+CURRDIR = os.path.dirname(os.path.abspath(__file__))
+# could be PNG or SVG as well
+ICON = os.path.join(CURRDIR, 'python3.xpm')
 
+# Cross-platform tray icon implementation
+# See:
+# * http://ubuntuforums.org/showthread.php?t=1923373#post11902222
+# * https://github.com/syncthing/syncthing-gtk/blob/master/syncthing_gtk/statusicon.py
+class TrayIcon:
+	def __init__(self, appid, icon, menu):
+		self.menu = menu
+
+		APPIND_SUPPORT = 1
+		try: from gi.repository import AppIndicator3
+		except: APPIND_SUPPORT = 0
+
+		if APPIND_SUPPORT == 1:
+			self.ind = AppIndicator3.Indicator.new(appid, icon, AppIndicator3.IndicatorCategory.APPLICATION_STATUS)
+			self.ind.set_status (AppIndicator3.IndicatorStatus.ACTIVE)
+			self.ind.set_menu(self.menu)
+		else:
+			self.ind = Gtk.StatusIcon()
+			self.ind.set_from_file(icon)
+			self.ind.connect('popup-menu', self.right_click_event)
+
+	def right_click_event(self, icon, button, time):
+		def pos(menu, aicon):
+			return (Gtk.StatusIcon.position_menu(menu, aicon))
+
+		self.menu.popup(None, None, pos, icon, button, time)
 
 class Handler:
 
@@ -57,10 +83,7 @@ window.show_all()
 
 entry = builder.get_object('entry1')
 menu = builder.get_object('menu1')
-
-ai = AI.Indicator.new(APPID, ICON, AI.IndicatorCategory.SYSTEM_SERVICES)
-ai.set_status(AI.IndicatorStatus.ACTIVE)
-ai.set_menu(menu)  # NB: menu is required!
-
+icon = TrayIcon(APPID, ICON, menu)
 Notify.init(APPID)
+
 Gtk.main()
