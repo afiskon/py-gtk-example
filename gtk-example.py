@@ -34,7 +34,8 @@ class TrayIcon:
 
         if APPIND_SUPPORT == 1:
             self.ind = AppIndicator3.Indicator.new(
-                appid, icon, AppIndicator3.IndicatorCategory.APPLICATION_STATUS)
+                appid, icon,
+                AppIndicator3.IndicatorCategory.APPLICATION_STATUS)
             self.ind.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
             self.ind.set_menu(self.menu)
         else:
@@ -43,7 +44,8 @@ class TrayIcon:
             self.ind.connect('popup-menu', self.onPopupMenu)
 
     def onPopupMenu(self, icon, button, time):
-        self.menu.popup(None, None, Gtk.StatusIcon.position_menu, icon, button, time)
+        self.menu.popup(None, None, Gtk.StatusIcon.position_menu, icon,
+                        button, time)
 
 
 class Handler:
